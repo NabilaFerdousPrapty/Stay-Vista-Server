@@ -52,9 +52,22 @@ async function run() {
     
     // get all rooms FROM DB
     app.get('/rooms', async (req, res) => {
-      const result=await roomsCollection.find({}).toArray();
+      const category=req.query.category;
+      let query={};
+      if(category && category!=='null'){
+        query={category:category};
+      }
+      const result=await roomsCollection.find(query).toArray();
       res.send(result);
     })
+    //get single room data using _id
+    app.get('/room/:id', async (req, res) => {
+      const id = req.params.id;
+      console.log(id); 
+      const query = { _id: new ObjectId(id) };
+      const result = await roomsCollection.findOne(query);
+      res.send(result);
+  });
     // auth related api
     app.post('/jwt', async (req, res) => {
       const user = req.body
